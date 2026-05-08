@@ -1,14 +1,14 @@
-{% extends 'Admin/base.html.twig' %}
+{% extends '@AmzsCore/base.html.twig' %}
 {% block title %}CMS - {{ page.id is not null ? "Edit" : "Add" }} page{% endblock %}
 
 {% block toolbar %}
-    {% embed 'Admin/partials/toolbar.html.twig' %}
+    {% embed '@AmzsCore/Layout/_toolbar.html.twig' %}
         {% block toolbar_title %}{{ page.id is not null ? "Edit" : "Add" }} Page{% endblock toolbar_title %}
 
         {% block toolbar_breadcrumbs %}
             <!--begin::Item-->
             <li class="breadcrumb-item text-muted">
-                <a href="{{ path(app_admin_page_index_route) }}" class="text-muted text-hover-primary">Page</a>
+                <a href="{{ path(constant('AmzsCMS\\PageBundle\\Constant\\PageRoute::ROUTE_INDEX')) }}" class="text-muted text-hover-primary">Page</a>
             </li>
             <!--end::Item-->
             <!--begin::Item-->
@@ -28,15 +28,9 @@
 
 {% block body %}
 
-    {% import 'Admin/partials/macros.html.twig' as macros %}
+    {% import '@AmzsArticle/article/partials/macros.html.twig' as macros %}
     <!--begin::Form-->
-    {{ form_start(form, {attr: {
-        class: "form d-flex flex-column flex-lg-row",
-        id: 'amz_post_add',
-        'action': path('app_admin_page_add'),
-        'data-controller': 'Admin--page-add',
-        'data-Admin--page-add-target': 'form'
-    }}) }}
+    {{ form_start(form, {attr: {class: "form d-flex flex-column flex-lg-row"}}) }}
     {% do form.post.setRendered %}
     <!--begin::Aside column-->
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10" data-controller="core-gallery"
@@ -51,14 +45,14 @@
                 </div>
                 <!--end::Card title-->
                 <div class="card-toolbar">
-                    <a href="{{ path(app_admin_media_library_index_modal_route, {'event': 'listenPickedPicture'}) }}" class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                       data-amz-btn-open-modal
-                       data-bs-toggle="tooltip" title="Open Gallery">
-                        <i class="ki-duotone ki-pencil fs-7">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                    </a>
+{#                    <a href="{{ path(app_admin_media_library_index_modal_route, {'event': 'listenPickedPicture'}) }}" class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"#}
+{#                       data-amz-btn-open-modal#}
+{#                       data-bs-toggle="tooltip" title="Open Gallery">#}
+{#                        <i class="ki-duotone ki-pencil fs-7">#}
+{#                            <span class="path1"></span>#}
+{#                            <span class="path2"></span>#}
+{#                        </i>#}
+{#                    </a>#}
                 </div>
             </div>
             <!--end::Card header-->
@@ -255,7 +249,7 @@
                                 <label class="form-label">Language</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
-                                {{ form_widget(form.language, {attr: {class: "form-control mb-2"}}) }}
+{#                                {{ form_widget(form.language, {attr: {class: "form-control mb-2"}}) }}#}
                                 <!--end::Input-->
                             </div>
                             <!--end::Input group-->
@@ -276,7 +270,7 @@
                         <!--end::Card header-->
                     </div>
                     <!--end::General options-->
-                    {{ include('Admin/partials/post/social_sharing.html.twig') }}
+                    {{ include('@AmzsArticle/article/social_sharing.html.twig') }}
                 </div>
             </div>
             <!--end::Tab pane-->
@@ -346,7 +340,7 @@
         <!--end::Tab content-->
         <div class="d-flex justify-content-end">
             <!--begin::Button-->
-            <a href="{{ path(app_admin_page_index_route) }}" class="btn btn-light me-5">Cancel</a>
+            <a href="{{ path(constant('AmzsCMS\\PageBundle\\Constant\\PageRoute::ROUTE_INDEX'))}}" class="btn btn-light me-5">Cancel</a>
             <!--end::Button-->
             <!--begin::Button-->
             <button type="button"   data-action='click->Admin--page-add#add:prevent' class="btn btn-primary">

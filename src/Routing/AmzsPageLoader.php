@@ -5,13 +5,13 @@ namespace AmzsCMS\PageBundle\Routing;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\RouteCollection;
 
-class AmzsTopicLoader extends Loader
+class AmzsPageLoader extends Loader
 {
     private $isLoaded = false;
     public function load($resource, ?string $type = null): RouteCollection
     {
         if (true === $this->isLoaded) {
-            throw new \RuntimeException('Do not add the "amzs_topic_route_loader" loader twice');
+            throw new \RuntimeException('Do not add the "amzs_page_route_loader" loader twice');
         }
         $type = 'yaml';
         $routes = new RouteCollection();
@@ -28,6 +28,6 @@ class AmzsTopicLoader extends Loader
 
     public function supports($resource, ?string $type = null): bool
     {
-        return 'amzs_topic_route_loader' == $type;
+        return 'amzs_page_route_loader' == $type;
     }
 }

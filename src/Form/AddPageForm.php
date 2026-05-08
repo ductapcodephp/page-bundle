@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Form\Admin\Page;
+namespace AmzsCMS\PageBundle\Form;
 
-use App\Core\DataType\LanguageDataType;
-use App\Core\Entity\Page;
-use App\Form\Admin\Common\AddPostType;
-use App\Form\Common\LanguageChoiceType;
+use AmzsCMS\PageBundle\Entity\Page;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -24,7 +21,6 @@ class AddPageForm extends AbstractType
         $builder->add('post', AddPostType::class, $page instanceof Page ? [
             'data' => $page->getPost()
         ]: null);
-        $builder->add('language', LanguageChoiceType::class);
         $builder->add('css', TextareaType::class, ['required' => false]);
         $builder->add('customCss', TextareaType::class, ['required' => false]);
     }

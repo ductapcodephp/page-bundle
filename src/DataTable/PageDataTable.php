@@ -2,24 +2,32 @@
 
 namespace AmzsCMS\PageBundle\DataTable;
 
-use App\Core\DataType\LanguageDataType;
-use App\Core\DataType\MenuDataType;
-use App\Core\DataType\PostStatusType;
-use App\Core\DataType\RoleDataType;
-use App\Core\Entity\Menu;
-use App\Core\Entity\Page;
-use App\Core\Entity\User;
-use App\Core\Repository\PageRepository;
-use App\Repository\UserRepository;
-use App\Service\DataTable\BaseDataTable;
+use AmzsCMS\CoreBundle\Service\Datatable\BaseDataTable;
+use AmzsCMS\PageBundle\DataType\PostStatusType;
+use AmzsCMS\PageBundle\Entity\Page;
+use AmzsCMS\PageBundle\Repository\PageRepository;
 use Doctrine\ORM\QueryBuilder;
+use Gedmo\Translatable\TranslatableListener;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class PageDataTable extends BaseDataTable
 {
     protected $entityAlias = 'page';
-    public function __construct(PageRepository $repository)
+    private  $translatableListener;
+    private  $parameterBag;
+    private $csrfTokenManager;
+    private $defaultLocale;
+    public function __construct(PageRepository $repository ,
+        TranslatableListener $translatableListener,
+        ParameterBagInterface $parameterBag,
+        CsrfTokenManagerInterface $csrfTokenManager)
     {
+        $this->translatableListener = $translatableListener;
+        $this->parameterBag = $parameterBag;
+        $this->defaultLocale = $parameterBag->get('language')['default'];
+        $this->csrfTokenManager = $csrfTokenManager;
         parent::__construct($repository);
     }
 
@@ -34,9 +42,20 @@ class PageDataTable extends BaseDataTable
             ;
     }
 
+    protected function applyDefaultFilters(QueryBuilder $qb, Request $request): void
+    {
+    }
     protected function applyCustomFilters(QueryBuilder $qb, Request $request): void
     {
+        $locale = $request->query->get('language');
 
+        if (empty($locale)) {
+            return;
+        }
+        $this->translatableListener->setTranslatableLocale($locale);
+        if ($locale === $this->defaultLocale) {
+            return;
+        }
     }
 
     protected function getColumnMap(): array
@@ -64,12 +83,12 @@ class PageDataTable extends BaseDataTable
                 'id'         => $page->getId(),
                 'name'       => $page->getName(),
                 'slug'       => $page->getPost()->getSlug(),
-                'lang_code'  => $page->getLanguage(),
-
-                'language'   => LanguageDataType::getNameByCode($page->getLanguage()),
                 'published'  => PostStatusType::getNameByPublishType($page->getPost()->getPublished()),
+
                 'created_at' => $page->getCreatedAt()->format('Y-m-d H:i:s'),
                 'updated_at' => $page->getUpdatedAt()->format('Y-m-d H:i:s'),
+                '_csrf_token' => $this->csrfTokenManager->getToken('delete-article-'.$page->getId())->getValue(),
+
             ];
         }
         return $data;

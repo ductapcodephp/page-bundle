@@ -1,0 +1,3 @@
+amzs_admin_page_bundle:
+  resource: "@AmzsPageBundle/Resources/config/routes/page.yaml"
+  prefix:   /page

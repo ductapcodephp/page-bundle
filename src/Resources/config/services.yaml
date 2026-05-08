@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true
+
+  AmzsCMS\PageBundle\:
+    resource: '../../../src/'
+    exclude:
+      - '../../DependencyInjection/'
+      - '../../Kernel.php'
+      - '../../Enum/'
+      - '../../Traits/'
+      - '../../AmzsPageBundle.php'
+
+  AmzsCMS\PageBundle\Routing\AmzsPageLoader:
+    tags: [ routing.loader ]
+

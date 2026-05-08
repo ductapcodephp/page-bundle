@@ -1,9 +1,9 @@
 <?php
-namespace AmzsCMS\TopicBundle;
+namespace AmzsCMS\PageBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class AmzsTopicBundle extends Bundle
+class AmzsPageBundle extends Bundle
 {
 
 }

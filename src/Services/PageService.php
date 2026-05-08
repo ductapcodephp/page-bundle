@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Services;
+namespace AmzsCMS\PageBundle\Services;
 
-use App\Core\Entity\Page;
-use App\Core\Repository\PageRepository;
+use AmzsCMS\PageBundle\Entity\Page;
+use AmzsCMS\PageBundle\Repository\PageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,12 +12,10 @@ class PageService extends AbstractController
 {
     private $entityManager;
     private $pageRepository;
-    private $fileUploadService;
 
-    public function __construct(EntityManagerInterface $entityManager, PageRepository $pageRepository, FileUploadService $fileUploadService)
+    public function __construct(EntityManagerInterface $entityManager, PageRepository $pageRepository)
     {
         $this->entityManager = $entityManager;
-        $this->fileUploadService = $fileUploadService;
         $this->pageRepository = $pageRepository;
     }
 

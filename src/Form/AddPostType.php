@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace AmzsCMS\PageBundle\Form;
 
-use App\Core\DataType\PostStatusType;
-use App\Core\Entity\Post;
-use App\Core\Services\PictureService;
-use App\Form\Common\PublishedChoiceType;
-use App\Form\Common\SocialSharingType;
+use AmzsCMS\ArticleBundle\Entity\Post;
+use AmzsCMS\ArticleBundle\Form\Common\PublishedChoiceType;
+use AmzsCMS\ArticleBundle\Form\Common\SocialSharingType;
+use AmzsCMS\PageBundle\DataType\PostStatusType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,11 +19,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddPostType extends AbstractType
 {
-    private $pictureService;
-    public function __construct(PictureService $pictureService)
-    {
-        $this->pictureService = $pictureService;
-    }
+//    private $pictureService;
+//    public function __construct(PictureService $pictureService)
+//    {
+//        $this->pictureService = $pictureService;
+//    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -65,15 +62,15 @@ class AddPostType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            /** @var Post $data */
-            $post = $event->getData();
-            $thumbnail = $post->getThumbnail();
-            if(is_int($thumbnail)){
-                $picture = $this->pictureService->findById($thumbnail);
-                $post->setThumbnail($picture->getImage());
-            }
-        });
+//        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+//            /** @var Post $data */
+//            $post = $event->getData();
+//            $thumbnail = $post->getThumbnail();
+//            if(is_int($thumbnail)){
+//                $picture = $this->pictureService->findById($thumbnail);
+//                $post->setThumbnail($picture->getImage());
+//            }
+//        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

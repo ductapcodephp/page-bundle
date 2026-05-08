@@ -1,16 +1,16 @@
 <?php
 
-namespace AmzsCMS\TopicBundle\DependencyInjection;
+namespace AmzsCMS\PageBundle\DependencyInjection;
 
 
-use AmzsCMS\TopicBundle\Constant\PageRoute;
+use AmzsCMS\PageBundle\Constant\PageRoute;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class AmzsArticleExtension extends Extension implements PrependExtensionInterface
+class AmzsPageExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * @throws \Exception
@@ -32,11 +32,11 @@ class AmzsArticleExtension extends Extension implements PrependExtensionInterfac
     {
         $container->prependExtensionConfig('twig', [
             'globals' => [
-                'amzs_topic_index_route' => PageRoute::ROUTE_INDEX,
-                'amzs_topic_data_route' => PageRoute::ROUTE_DATA,
-                'amzs_topic_add_route' => PageRoute::ROUTE_ADD,
-                'amzs_topic_edit_route' => PageRoute::ROUTE_EDIT,
-                'amzs_topic_delete_route' => PageRoute::ROUTE_DELETE,
+                'amzs_page_index_route' => PageRoute::ROUTE_INDEX,
+                'amzs_page_data_route' => PageRoute::ROUTE_DATA,
+                'amzs_page_add_route' => PageRoute::ROUTE_ADD,
+                'amzs_page_edit_route' => PageRoute::ROUTE_EDIT,
+                'amzs_page_delete_route' => PageRoute::ROUTE_DELETE,
             ],
         ]);
     }

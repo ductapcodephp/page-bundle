@@ -1,0 +1,28 @@
+amzs_page_index_route:
+  path: /
+  controller: AmzsCMS\PageBundle\Controller\PageController::index
+  methods: [GET]
+
+amzs_page_data_route:
+  path: /data
+  controller: AmzsCMS\PageBundle\Controller\PageController::data
+  methods: [GET, POST]
+
+amzs_page_add_route:
+  path: /add
+  controller: AmzsCMS\PageBundle\Controller\PageController::add
+  methods: [GET, POST]
+
+amzs_page_edit_route:
+  path: /edit/{id}
+  controller: AmzsCMS\PageBundle\Controller\PageController::edit
+  methods: [GET, POST]
+  requirements:
+    id: '\d+|__ID__'
+
+amzs_page_delete_route:
+  path: /delete/{id}
+  controller: AmzsCMS\PageBundle\Controller\PageController::delete
+  methods: [POST]
+  requirements:
+    id: '\d+|__ID__'

@@ -1,6 +1,6 @@
 <?php
 
-namespace AmzsCMS\PageBundle\DataTable;
+namespace AmzsCMS\PageBundle\DataType;
 
 class PostStatusType
 {

@@ -1,101 +1,183 @@
-{% extends 'Admin/base.html.twig' %}
+{% extends '@AmzsCore/base.html.twig' %}
+
 {% block title %}CMS-Page Management{% endblock %}
 
 {% block toolbar %}
-    {% embed 'Admin/partials/toolbar.html.twig' %}
-        {% block toolbar_title %}Page Management{% endblock toolbar_title %}
+    {% embed '@AmzsCore/Layout/_toolbar.html.twig' %}
+
+        {% block toolbar_title %}
+            Page Management
+        {% endblock %}
 
         {% block toolbar_breadcrumbs %}
-            <!--begin::Item-->
             <li class="breadcrumb-item text-muted">
-                <a href="#" class="text-muted text-hover-primary">Page</a>
+                <a href="#" class="text-muted text-hover-primary">
+                    Page
+                </a>
             </li>
-            <!--end::Item-->
-        {% endblock toolbar_breadcrumbs %}
+        {% endblock %}
 
         {% block toolbar_button_actions %}
-            <a href="{{ path('app_admin_page_add') }}" class="btn btn-sm fw-bold btn-primary">Create</a>
-        {% endblock toolbar_button_actions %}
+            <a href="{{ path(amzs_page_add_route) }}"
+               class="btn btn-sm fw-bold btn-primary">
+                Create
+            </a>
+        {% endblock %}
+
     {% endembed %}
 {% endblock %}
 
 {% block body %}
-    {% embed '@AdminComponent/ui/_datatable_layout.html.twig' %}{% endembed %}
+
+    <div class="mb-3">
+        <select id="kt_amz_language_select"
+                class="form-select form-select-sm w-150px">
+
+            {% for locale in locales %}
+                <option value="{{ locale }}">
+                    {{ locale|upper }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    {% embed '@AmzsCore/Components/Table/base.html.twig' %}
+    {% endembed %}
+
 {% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
+
     <script>
         "use strict";
 
-        {% import 'Admin/partials/macros.html.twig' as macros %}
+        const $langSelect = $('#kt_amz_language_select');
 
         $(function () {
+
             KTModalForm.init();
 
             KTAmzDataTable.init({
-                ajaxUrl: "{{ path(app_admin_page_data_route) }}",
+
+                ajaxUrl: "{{ path(amzs_page_data_route) }}",
+
+                ajaxData: function (d) {
+                    d.language = $langSelect.val();
+                },
+
                 columns: [
-                    // cột Actions
+
+                    // Actions
                     {
                         data: null,
                         title: 'Actions',
                         orderable: false,
+
                         render: function (data, type, row) {
-                            const csrfToken = "{{ csrf_token('delete-page') }}";
-                            const editUrl   = "{{ path(app_admin_page_edit_route, {'id': '__ID__'}) }}".replace('__ID__', row.id);
-                            const block = "{{ path(app_admin_block_index_route, {'id': '__ID__'}) }}".replace('__ID__', row.id);
-                            const deleteUrl = "{{ path(app_admin_page_delete_route, {'id': '__ID__', '_csrf_token': '__csrf_token__'}) }}"
-                                .replace('__csrf_token__', csrfToken)
+
+                            const editUrl = "{{ path(amzs_page_edit_route, {'id': '__ID__'}) }}"
                                 .replace('__ID__', row.id);
+
+                            const deleteUrl = "{{ path(amzs_page_delete_route, {
+                                'id': '__ID__',
+                                '_csrf_token': '__CSRF_TOKEN__'
+                            }) }}"
+                                .replace('__ID__', row.id)
+                                .replace('__CSRF_TOKEN__', row._csrf_token);
+
                             return `
-                                    <a href="${editUrl}" class="btn btn-icon btn-active-light-primary w-30px h-30px me-2">
-                                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Edit">
-                                            {{ macros.icon_edit() }}
-                                        </span>
-                                    </a>
-                                      <a href="${block}" class="btn btn-icon btn-active-light-primary w-30px h-30px me-2"">
-                                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Block">
-                                            {{ macros.icon_block() }}
-                                        </span>
-                                    </a>
-                                    <a href="${deleteUrl}" data-amz-btn-remove class="btn btn-icon btn-active-light-primary w-30px h-30px">
-                                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Delete">
-                                            {{ macros.icon_delete() }}
-                                        </span>
-                                    </a>
-                                `;
+                                <a href="${editUrl}"
+                                   class="btn btn-icon btn-active-light-primary w-30px h-30px me-2">
+
+                                    <span data-bs-toggle="tooltip" title="Edit">
+                                        {{ icon('edit') }}
+                                    </span>
+
+                                </a>
+
+                                <a href="${deleteUrl}"
+                                   data-amz-btn-remove
+                                   class="btn btn-icon btn-active-light-primary w-30px h-30px">
+
+                                    <span data-bs-toggle="tooltip"
+                                          data-bs-trigger="hover"
+                                          data-bs-original-title="Delete">
+
+                                        {{ icon('delete') }}
+
+                                    </span>
+
+                                </a>
+                            `;
                         }
                     },
-                    { data: 'index',       title: 'ID' },
+
+                    {
+                        data: 'index',
+                        title: 'ID',
+                        width: '50px'
+                    },
+
                     {
                         data: 'name',
-                        title: 'Name',
-                        render: function (data, type, row) {
-                            const baseUrl = "{{ app.request.schemeAndHttpHost }}";
-                            const pageUrl = `${baseUrl}/${row.lang_code}/${row.slug}.html`;
-
-                            return `${data}<br>
-                                <a target="_blank" href="${pageUrl}" class="text-muted text-hover-primary fs-7">${pageUrl}</a>`;
-                        }
+                        title: 'Name'
                     },
+
+                    {
+                        data: 'slug',
+                        title: 'Slug'
+                    },
+
                     {
                         data: 'language',
                         title: 'Language',
-                        render: function (data, type, row) {
-                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+
+                        render: function (data) {
+                            return `
+                                <span class="badge badge-primary fs-7">
+                                    ${data}
+                                </span>
+                            `;
                         }
                     },
+
+                    // Published
                     {
                         data: 'published',
                         title: 'Published',
+
                         render: function (data) {
-                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+                            return `
+                                <span class="badge badge-success fs-7">
+                                    ${data}
+                                </span>
+                            `;
                         }
                     },
-                    { data: 'created_at', title: 'Created At' },
-                    { data: 'updated_at', title: 'Updated At' },
+
+                    {
+                        data: 'created_at',
+                        title: 'Created At'
+                    },
+
+                    {
+                        data: 'updated_at',
+                        title: 'Updated At'
+                    },
                 ]
             });
+
+            $langSelect.on('change', function () {
+
+                $('#kt_datatable')
+                    .DataTable()
+                    .ajax
+                    .reload();
+
+            });
+
         });
     </script>
 {% endblock %}

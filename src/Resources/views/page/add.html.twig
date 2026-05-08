@@ -1,0 +1,374 @@
+{% extends 'Admin/base.html.twig' %}
+{% block title %}CMS - {{ page.id is not null ? "Edit" : "Add" }} page{% endblock %}
+
+{% block toolbar %}
+    {% embed 'Admin/partials/toolbar.html.twig' %}
+        {% block toolbar_title %}{{ page.id is not null ? "Edit" : "Add" }} Page{% endblock toolbar_title %}
+
+        {% block toolbar_breadcrumbs %}
+            <!--begin::Item-->
+            <li class="breadcrumb-item text-muted">
+                <a href="{{ path(app_admin_page_index_route) }}" class="text-muted text-hover-primary">Page</a>
+            </li>
+            <!--end::Item-->
+            <!--begin::Item-->
+            <li class="breadcrumb-item">
+                <span class="bullet bg-gray-500 w-5px h-2px"></span>
+            </li>
+            <!--end::Item-->
+            <!--begin::Item-->
+            <li class="breadcrumb-item text-muted">{{ page.id is not null ? "Edit" : "Add" }}</li>
+            <!--end::Item-->
+        {% endblock toolbar_breadcrumbs %}
+
+        {% block toolbar_button_actions %}
+        {% endblock toolbar_button_actions %}
+    {% endembed %}
+{% endblock %}
+
+{% block body %}
+
+    {% import 'Admin/partials/macros.html.twig' as macros %}
+    <!--begin::Form-->
+    {{ form_start(form, {attr: {
+        class: "form d-flex flex-column flex-lg-row",
+        id: 'amz_post_add',
+        'action': path('app_admin_page_add'),
+        'data-controller': 'Admin--page-add',
+        'data-Admin--page-add-target': 'form'
+    }}) }}
+    {% do form.post.setRendered %}
+    <!--begin::Aside column-->
+    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10" data-controller="core-gallery"
+         data-action="Admin--picture-global:listenPickedPicture@window->core-gallery#listenPickedPicture">
+        <!--begin::Thumbnail settings-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <!--begin::Card title-->
+                <div class="card-title">
+                    <h2>Thumbnail</h2>
+                </div>
+                <!--end::Card title-->
+                <div class="card-toolbar">
+                    <a href="{{ path(app_admin_media_library_index_modal_route, {'event': 'listenPickedPicture'}) }}" class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                       data-amz-btn-open-modal
+                       data-bs-toggle="tooltip" title="Open Gallery">
+                        <i class="ki-duotone ki-pencil fs-7">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </a>
+                </div>
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body text-center pt-0">
+                <!--begin::Image input-->
+                <!--begin::Image input placeholder-->
+                <!--end::Image input placeholder-->
+                <div  data-core-gallery-target="review" class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" style="background-image: url('{{ asset('themes/media/svg/files/blank-image.svg') }}');">
+                    <!--begin::Preview existing avatar-->
+                    <div class="image-input-wrapper w-150px h-150px"></div>
+                    <!--end::Preview existing avatar-->
+                    <!--begin::Label-->
+                    {{ form_widget(form.post.thumbnail, {attr: {hidden: true, 'data-core-gallery-target': 'input'}}) }}
+                    <!--begin::Inputs-->
+                    <!--end::Inputs-->
+                    <!--end::Label-->
+                    <!--begin::Cancel-->
+                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel">
+                            <i class="ki-duotone ki-cross fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </span>
+                    <!--end::Cancel-->
+                    <!--begin::Remove-->
+                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove">
+                            <i class="ki-duotone ki-cross fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </span>
+                    <!--end::Remove-->
+                </div>
+                <!--end::Image input-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Set the product thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
+                <!--end::Description-->
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Thumbnail settings-->
+        <!--begin::Status-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <!--begin::Card title-->
+                <div class="card-title">
+                    <h2>Status</h2>
+                </div>
+                <!--end::Card title-->
+                <!--begin::Card toolbar-->
+                <div class="card-toolbar">
+                    <div class="rounded-circle bg-success w-15px h-15px" data-admin--page-add-target="dotStatus"></div>
+                </div>
+                <!--begin::Card toolbar-->
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <!--begin::Select2-->
+                {{ form_widget(form.post.published, {attr: {'class': 'form-select fs-7', 'data-controller':'select2', 'data-Admin--page-add-target': 'status'}}) }}
+                <!--end::Select2-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Set the product status.</div>
+                <!--end::Description-->
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Status-->
+        <!--begin::Category & tags-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <!--begin::Card title-->
+                <div class="card-title">
+                    <h2>Page Details</h2>
+                </div>
+                <!--end::Card title-->
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <!--begin::Label-->
+                <label class="form-label d-block">Tags</label>
+                <!--end::Label-->
+                <!--begin::Input-->
+                {{ form_widget(form.post.arrTags) }}
+                <!--end::Input-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Add tags to a page.</div>
+                <!--end::Description-->
+                <!--end::Input group-->
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Category & tags-->
+        {% if page.id is not null %}
+            <!--begin::Page Config-->
+            <div class="card card-flush py-4">
+                <!--begin::Card header-->
+                <div class="card-header">
+                    <!--begin::Card title-->
+                    <div class="card-title">
+                        <h2>Page Config</h2>
+                    </div>
+                    <!--end::Card title-->
+                </div>
+                <!--end::Card header-->
+                <!--begin::Card body-->
+                <div class="card-body pt-0">
+                    {{ macros.toggle('Keep slug', 'keep_slug', false, 'keep-slug' ) }}
+                    <div class="mb-2"></div>
+                    {{ macros.toggle('Hot', form.post.isHot.vars.full_name , page.post.isHot == 2, form.post.isHot.vars.id ) }}
+                    <div class="mb-2"></div>
+                    {{ macros.toggle('Lasted New', form.post.isNew.vars.full_name , page.post.isNew == 2, form.post.isNew.vars.id ) }}
+                </div>
+                <!--end::Card body-->
+            </div>
+            <!--end::Page Config-->
+        {% endif %}
+    </div>
+    <!--end::Aside column-->
+    <!--begin::Main column-->
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <!--begin:::Tabs-->
+        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
+            <!--begin:::Tab item-->
+            <li class="nav-item">
+                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#amz_page_general">General</a>
+            </li>
+            <!--end:::Tab item-->
+            <!--begin:::Tab item-->
+            <li class="nav-item">
+                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#amz_page_advanced">Advanced</a>
+            </li>
+            <!--end:::Tab item-->
+        </ul>
+        <!--end:::Tabs-->
+        <!--begin::Tab content-->
+        <div class="tab-content">
+            <!--begin::Tab pane-->
+            <div class="tab-pane fade show active" id="amz_page_general" role="tab-panel">
+                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <!--begin::General options-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>General</h2>
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Page Name</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form_widget(form.name, {attr: {class: "form-control mb-2"}}) }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">A page name is required and recommended to be unique.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Title</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form_widget(form.post.title, {attr: {class: "form-control mb-2", 'data-Admin--page-add-target': 'title'}}) }}
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="form-label">SubTitle</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form_widget(form.post.subTitle, {attr: {class: "form-control mb-2"}}) }}
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="form-label">Language</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form_widget(form.language, {attr: {class: "form-control mb-2"}}) }}
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div>
+                                <!--begin::Label-->
+                                <label class="form-label">Description</label>
+                                <!--end::Label-->
+                                <!--begin::Editor-->
+                                {{ form_widget(form.post.description, {attr: {class: "mb-2 form-control", rows: 5, 'data-Admin--page-add-target': 'des'}}) }}
+                                <!--end::Editor-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Set a description to the Page for better visibility.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                        </div>
+                        <!--end::Card header-->
+                    </div>
+                    <!--end::General options-->
+                    {{ include('Admin/partials/post/social_sharing.html.twig') }}
+                </div>
+            </div>
+            <!--end::Tab pane-->
+            <!--begin::Tab pane-->
+            <div class="tab-pane fade" id="amz_page_advanced" role="tab-panel">
+                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <!--begin::Inventory-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>CSS UI</h2>
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="form-label">CSS</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form_widget(form.css, {attr: {class: "form-control"}}) }}
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Enter the css.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="form-label">Custom CSS</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                {{ form_widget(form.customCss, {attr: {class: "form-control"}}) }}
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+                        </div>
+                        <!--end::Card header-->
+                    </div>
+                    <!--end::Content-->
+                    {% if page.id is not null %}
+                        <!--begin::Variations-->
+                        <div class="card card-flush py-4">
+                            <!--begin::Card header-->
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h2>Content</h2>
+                                </div>
+                            </div>
+                            <!--end::Card header-->
+                            <!--begin::Card body-->
+                            <div class="card-body pt-0">
+                                {{ form_widget(form.post.content, {attr: {class: "form-control"}}) }}
+                            </div>
+                            <!--end::Card header-->
+                        </div>
+                        <!--end::Content-->
+                    {% endif %}
+                </div>
+            </div>
+            <!--end::Tab pane-->
+        </div>
+        <!--end::Tab content-->
+        <div class="d-flex justify-content-end">
+            <!--begin::Button-->
+            <a href="{{ path(app_admin_page_index_route) }}" class="btn btn-light me-5">Cancel</a>
+            <!--end::Button-->
+            <!--begin::Button-->
+            <button type="button"   data-action='click->Admin--page-add#add:prevent' class="btn btn-primary">
+                <span class="indicator-label">Save Changes</span>
+                <span class="indicator-progress">Please wait...
+						<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+            </button>
+            <!--end::Button-->
+        </div>
+    </div>
+    <div id="app-modal"></div>
+
+    <!--end::Main column-->
+    {{ form_end(form) }}
+    <!--end::Form-->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            KTModalForm.init();
+        });
+    </script>
+{% endblock %}

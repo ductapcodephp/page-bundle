@@ -1,0 +1,101 @@
+{% extends 'Admin/base.html.twig' %}
+{% block title %}CMS-Page Management{% endblock %}
+
+{% block toolbar %}
+    {% embed 'Admin/partials/toolbar.html.twig' %}
+        {% block toolbar_title %}Page Management{% endblock toolbar_title %}
+
+        {% block toolbar_breadcrumbs %}
+            <!--begin::Item-->
+            <li class="breadcrumb-item text-muted">
+                <a href="#" class="text-muted text-hover-primary">Page</a>
+            </li>
+            <!--end::Item-->
+        {% endblock toolbar_breadcrumbs %}
+
+        {% block toolbar_button_actions %}
+            <a href="{{ path('app_admin_page_add') }}" class="btn btn-sm fw-bold btn-primary">Create</a>
+        {% endblock toolbar_button_actions %}
+    {% endembed %}
+{% endblock %}
+
+{% block body %}
+    {% embed '@AdminComponent/ui/_datatable_layout.html.twig' %}{% endembed %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        "use strict";
+
+        {% import 'Admin/partials/macros.html.twig' as macros %}
+
+        $(function () {
+            KTModalForm.init();
+
+            KTAmzDataTable.init({
+                ajaxUrl: "{{ path(app_admin_page_data_route) }}",
+                columns: [
+                    // cột Actions
+                    {
+                        data: null,
+                        title: 'Actions',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            const csrfToken = "{{ csrf_token('delete-page') }}";
+                            const editUrl   = "{{ path(app_admin_page_edit_route, {'id': '__ID__'}) }}".replace('__ID__', row.id);
+                            const block = "{{ path(app_admin_block_index_route, {'id': '__ID__'}) }}".replace('__ID__', row.id);
+                            const deleteUrl = "{{ path(app_admin_page_delete_route, {'id': '__ID__', '_csrf_token': '__csrf_token__'}) }}"
+                                .replace('__csrf_token__', csrfToken)
+                                .replace('__ID__', row.id);
+                            return `
+                                    <a href="${editUrl}" class="btn btn-icon btn-active-light-primary w-30px h-30px me-2">
+                                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Edit">
+                                            {{ macros.icon_edit() }}
+                                        </span>
+                                    </a>
+                                      <a href="${block}" class="btn btn-icon btn-active-light-primary w-30px h-30px me-2"">
+                                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Block">
+                                            {{ macros.icon_block() }}
+                                        </span>
+                                    </a>
+                                    <a href="${deleteUrl}" data-amz-btn-remove class="btn btn-icon btn-active-light-primary w-30px h-30px">
+                                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Delete">
+                                            {{ macros.icon_delete() }}
+                                        </span>
+                                    </a>
+                                `;
+                        }
+                    },
+                    { data: 'index',       title: 'ID' },
+                    {
+                        data: 'name',
+                        title: 'Name',
+                        render: function (data, type, row) {
+                            const baseUrl = "{{ app.request.schemeAndHttpHost }}";
+                            const pageUrl = `${baseUrl}/${row.lang_code}/${row.slug}.html`;
+
+                            return `${data}<br>
+                                <a target="_blank" href="${pageUrl}" class="text-muted text-hover-primary fs-7">${pageUrl}</a>`;
+                        }
+                    },
+                    {
+                        data: 'language',
+                        title: 'Language',
+                        render: function (data, type, row) {
+                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: 'published',
+                        title: 'Published',
+                        render: function (data) {
+                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+                        }
+                    },
+                    { data: 'created_at', title: 'Created At' },
+                    { data: 'updated_at', title: 'Updated At' },
+                ]
+            });
+        });
+    </script>
+{% endblock %}

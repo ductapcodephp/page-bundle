@@ -19,7 +19,9 @@ class AddPageForm extends AbstractType
         $page = $options['data'];
         $builder->add('name', TextType::class);
         $builder->add('post', AddPostType::class, $page instanceof Page ? [
-            'data' => $page->getPost()
+            'data' => $page->getPost(),
+            'locales'      => $options['locales'],
+            'translations' => $options['translations'],
         ]: null);
         $builder->add('css', TextareaType::class, ['required' => false]);
         $builder->add('customCss', TextareaType::class, ['required' => false]);
@@ -29,6 +31,8 @@ class AddPageForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Page::class,
+            'locales'      => ['vi'],
+            'translations' => [],
         ]);
     }
 }

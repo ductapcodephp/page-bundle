@@ -84,10 +84,9 @@ class PageDataTable extends BaseDataTable
                 'name'       => $page->getName(),
                 'slug'       => $page->getPost()->getSlug(),
                 'published'  => PostStatusType::getNameByPublishType($page->getPost()->getPublished()),
-
                 'created_at' => $page->getCreatedAt()->format('Y-m-d H:i:s'),
                 'updated_at' => $page->getUpdatedAt()->format('Y-m-d H:i:s'),
-                '_csrf_token' => $this->csrfTokenManager->getToken('delete-article-'.$page->getId())->getValue(),
+                '_csrf_token' => $this->csrfTokenManager->getToken('delete-page-'.$page->getId())->getValue(),
 
             ];
         }

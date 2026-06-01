@@ -41,30 +41,40 @@
 
     <!--begin::Aside column-->
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10"
-         data-controller="core-gallery"
-         data-action="Admin--picture-global:listenPickedPicture@window->core-gallery#listenPickedPicture">
+        >
 
         <!-- Thumbnail -->
-        <div class="card card-flush py-4">
+        <div class="card card-flush py-4" data-gallery-target>
             <div class="card-header">
-                <div class="card-title">
+                <div class="card-title" >
                     <h2>Thumbnail</h2>
+                </div>
+                <div class="card-toolbar">
+
+                    <a
+                            href="javascript:void(0)"
+                            class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                            data-amzs-gallery-modal
+                            data-bs-toggle="tooltip"
+                            title="Open Gallery"
+                    >
+                        <i class="ki-duotone ki-pencil fs-7">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </a>
+
                 </div>
             </div>
 
             <div class="card-body text-center pt-0">
-                <div data-core-gallery-target="review"
+                <div
                      class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
-                     style="background-image: url('{{ asset('themes/media/svg/files/blank-image.svg') }}');">
+                     style="background-image: url('{{ asset(page is not null and page.post.thumbnail is not null ? page.post.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
 
                     <div class="image-input-wrapper w-150px h-150px"></div>
 
-                    {{ form_widget(form.post.thumbnail, {
-                        attr: {
-                            hidden: true,
-                            'data-core-gallery-target': 'input'
-                        }
-                    }) }}
+                    {{ form_widget(form.post.thumbnail, {attr: {hidden: true}}) }}
 
                     <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                           data-kt-image-input-action="cancel"

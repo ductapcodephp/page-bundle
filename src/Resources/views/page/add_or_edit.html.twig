@@ -150,22 +150,14 @@
                 <div class="card-body pt-0">
                     {{ macros.toggle('Keep slug', 'keep_slug', true, 'keep-slug' ) }}
 
-                    <div class="mb-2"></div>
-
-                    {{ macros.toggle('Hot',
-                        form.isHot.vars.full_name,
-                        page.isHot == 2,
-                        form.isHot.vars.id
-                    ) }}
+                    {{ form_widget(form.isHot) }}
+                    {{ form_widget(form.isNew) }}
 
                     <div class="mb-2"></div>
+                    {{ macros.toggle('Hot', form.isHot.vars.full_name , page.isHot == 2, form.isHot.vars.id ) }}
 
-                    {{ macros.toggle(
-                        'Lasted New',
-                        form.isNew.vars.full_name,
-                        page.isNew == 2,
-                        form.isNew.vars.id
-                    ) }}
+                    <div class="mb-2"></div>
+                    {{ macros.toggle('Lasted New', form.isNew.vars.full_name , page.isNew == 2, form.isNew.vars.id ) }}
                 </div>
             </div>
         {% endif %}

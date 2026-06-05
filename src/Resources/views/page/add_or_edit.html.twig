@@ -29,7 +29,7 @@
 
 {% block body %}
 
-    {% import '@AmzsArticle/article/partials/macros.html.twig' as macros %}
+    {% import '@AmzsPage/page/partials/macros.html.twig' as macros %}
 
     {{ form_start(form, {
         attr: {
@@ -37,44 +37,34 @@
         }
     }) }}
 
-    {% do form.post.setRendered %}
+    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
 
-    <!--begin::Aside column-->
-    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10"
-        >
-
-        <!-- Thumbnail -->
         <div class="card card-flush py-4" data-gallery-target>
             <div class="card-header">
                 <div class="card-title" >
                     <h2>Thumbnail</h2>
                 </div>
                 <div class="card-toolbar">
-
-                    <a
-                            href="javascript:void(0)"
-                            class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                            data-amzs-gallery-modal
-                            data-bs-toggle="tooltip"
-                            title="Open Gallery"
-                    >
+                    <a href="javascript:void(0)"
+                       class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                       data-amzs-gallery-modal
+                       data-bs-toggle="tooltip"
+                       title="Open Gallery">
                         <i class="ki-duotone ki-pencil fs-7">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                     </a>
-
                 </div>
             </div>
 
             <div class="card-body text-center pt-0">
-                <div
-                     class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
-                     style="background-image: url('{{ asset(page is not null and page.post.thumbnail is not null ? page.post.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
+                <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
+                     style="background-image: url('{{ asset(page is not null and page.thumbnail is not null ? page.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
 
                     <div class="image-input-wrapper w-150px h-150px"></div>
 
-                    {{ form_widget(form.post.thumbnail, {attr: {hidden: true}}) }}
+                    {{ form_widget(form.thumbnail, {attr: {hidden: true}}) }}
 
                     <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                           data-kt-image-input-action="cancel"
@@ -103,20 +93,18 @@
             </div>
         </div>
 
-        <!-- Status -->
         <div class="card card-flush py-4">
             <div class="card-header">
                 <div class="card-title">
                     <h2>Status</h2>
                 </div>
-
                 <div class="card-toolbar">
                     <div class="rounded-circle bg-success w-15px h-15px"></div>
                 </div>
             </div>
 
             <div class="card-body pt-0">
-                {{ form_widget(form.post.published, {
+                {{ form_widget(form.published, {
                     attr: {
                         class: 'form-select fs-7',
                         'data-controller':'select2'
@@ -129,7 +117,6 @@
             </div>
         </div>
 
-        <!-- Tags -->
         <div class="card card-flush py-4">
             <div class="card-header">
                 <div class="card-title">
@@ -140,7 +127,7 @@
             <div class="card-body pt-0">
                 <label class="form-label d-block">Tags</label>
 
-                {{ form_widget(form.post.arrTags, {
+                {{ form_widget(form.arrTags, {
                     attr: {
                         class: 'js-tagify'
                     }
@@ -166,26 +153,23 @@
                     <div class="mb-2"></div>
 
                     {{ macros.toggle('Hot',
-                        form.post.isHot.vars.full_name,
-                        page.post.isHot == 2,
-                        form.post.isHot.vars.id
+                        form.isHot.vars.full_name,
+                        page.isHot == 2,
+                        form.isHot.vars.id
                     ) }}
 
                     <div class="mb-2"></div>
 
                     {{ macros.toggle(
                         'Lasted New',
-                        form.post.isNew.vars.full_name,
-                        page.post.isNew == 2,
-                        form.post.isNew.vars.id
+                        form.isNew.vars.full_name,
+                        page.isNew == 2,
+                        form.isNew.vars.id
                     ) }}
                 </div>
             </div>
         {% endif %}
     </div>
-    <!--end::Aside column-->
-
-    <!--begin::Main column-->
     <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
 
         {% if locales is defined and locales|length > 1 %}
@@ -202,9 +186,7 @@
             </div>
         {% endif %}
 
-        <!-- Tabs -->
         <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
-
             <li class="nav-item">
                 <a class="nav-link text-active-primary pb-4 active"
                    data-bs-toggle="tab"
@@ -212,7 +194,6 @@
                     General
                 </a>
             </li>
-
             <li class="nav-item">
                 <a class="nav-link text-active-primary pb-4"
                    data-bs-toggle="tab"
@@ -222,10 +203,8 @@
             </li>
         </ul>
 
-        <!-- Tab content -->
         <div class="tab-content">
 
-            <!-- GENERAL -->
             <div class="tab-pane fade show active"
                  id="amz_page_general"
                  role="tab-panel">
@@ -233,7 +212,6 @@
                 <div class="d-flex flex-column gap-7 gap-lg-10">
 
                     <div class="card card-flush py-4">
-
                         <div class="card-header">
                             <div class="card-title">
                                 <h2>General</h2>
@@ -241,7 +219,6 @@
                         </div>
 
                         <div class="card-body pt-0">
-
                             <div class="mb-10 fv-row">
                                 <label class="required form-label">
                                     Page Name
@@ -259,7 +236,6 @@
                             </div>
 
                             {% for locale in locales %}
-
                                 <div class="locale-fields"
                                      data-locale="{{ locale }}"
                                      {% if not loop.first %}style="display:none"{% endif %}>
@@ -274,7 +250,7 @@
                                             {% endif %}
                                         </label>
 
-                                        {{ form_widget(form.post['title_' ~ locale], {
+                                        {{ form_widget(form['title_' ~ locale], {
                                             attr: {
                                                 class: "form-control mb-2"
                                             }
@@ -291,7 +267,7 @@
                                             {% endif %}
                                         </label>
 
-                                        {{ form_widget(form.post['description_' ~ locale], {
+                                        {{ form_widget(form['description_' ~ locale], {
                                             attr: {
                                                 class: "form-control mb-2",
                                                 rows: 5
@@ -302,20 +278,16 @@
                                             Set a description to the Page for better visibility.
                                         </div>
                                     </div>
-
                                 </div>
-
                             {% endfor %}
-
                         </div>
                     </div>
 
-                    {{ include('@AmzsArticle/article/social_sharing.html.twig') }}
+                    {{ include('@AmzsPage/page/social_sharing.html.twig') }}
 
                 </div>
             </div>
 
-            <!-- ADVANCED -->
             <div class="tab-pane fade"
                  id="amz_page_advanced"
                  role="tab-panel">
@@ -323,7 +295,6 @@
                 <div class="d-flex flex-column gap-7 gap-lg-10">
 
                     <div class="card card-flush py-4">
-
                         <div class="card-header">
                             <div class="card-title">
                                 <h2>CSS UI</h2>
@@ -331,7 +302,6 @@
                         </div>
 
                         <div class="card-body pt-0">
-
                             <div class="mb-10 fv-row">
                                 <label class="form-label">CSS</label>
 
@@ -355,52 +325,40 @@
                                     }
                                 }) }}
                             </div>
-
                         </div>
                     </div>
 
                     {% if page.id is not null %}
-
                         {% for locale in locales %}
-
                             <div class="locale-fields"
                                  data-locale="{{ locale }}"
                                  {% if not loop.first %}style="display:none"{% endif %}>
 
                                 <div class="d-flex align-items-center mb-3">
-                                    <h4 class="mb-0">
-                                        Content
-                                    </h4>
-
+                                    <h4 class="mb-0">Content</h4>
                                     <span class="badge badge-light-primary ms-2">
-                {{ locale|upper }}
-            </span>
+                                        {{ locale|upper }}
+                                    </span>
                                 </div>
 
                                 <div class="text-muted fs-7 mb-3">
-                                    Editing content for language:
-                                    <strong>{{ locale|upper }}</strong>
+                                    Editing content for language: <strong>{{ locale|upper }}</strong>
                                 </div>
 
-                                {{ form_widget(form.post['content_' ~ locale], {
+                                {{ form_widget(form['content_' ~ locale], {
                                     attr: {
                                         class: 'form-control locale-editor',
                                         'data-locale': locale
                                     }
                                 }) }}
-
                             </div>
-
                         {% endfor %}
-
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- Submit -->
         <div class="d-flex justify-content-end">
-
             <a href="{{ path(constant('AmzsCMS\\PageBundle\\Constant\\PageRoute::ROUTE_INDEX')) }}"
                class="btn btn-light me-5">
                 Cancel
@@ -415,9 +373,7 @@
                         {{ path(constant('AmzsCMS\\PageBundle\\Constant\\PageRoute::ROUTE_EDIT'), {id: page.id}) }}
                     {% endif %}">
 
-                <span class="indicator-label">
-                    Save Changes
-                </span>
+                <span class="indicator-label">Save Changes</span>
 
                 <span class="indicator-progress">
                     Please wait...
@@ -433,8 +389,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-
     <script src="{{ asset(get_path_article_cms_asset() ~ 'assets/js/article.js') }}"></script>
-
-
 {% endblock %}

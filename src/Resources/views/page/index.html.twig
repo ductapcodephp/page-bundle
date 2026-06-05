@@ -29,13 +29,7 @@
 
 {% block body %}
 
-    <div class="mb-3">
-        <select id="kt_amz_language_select" class="form-select form-select-sm w-150px">
-            {% for locale in locales %}
-                <option value="{{ locale }}">{{ locale }}</option>
-            {% endfor %}
-        </select>
-    </div>
+
 
     {% embed '@AmzsCore/Components/Table/base.html.twig' %}
     {% endembed %}
@@ -118,22 +112,6 @@
                     {
                         data: 'slug',
                         title: 'Slug'
-                    },
-
-                    {
-                        data: null,
-                        title: 'Language',
-
-                        render: function () {
-
-                            const lang = $langSelect.val();
-
-                            return `
-                            <span class="badge badge-primary fs-7">
-                                ${lang}
-                            </span>
-                        `;
-                        }
                     },
 
                     // Published

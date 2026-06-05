@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace AmzsCMS\PageBundle\Controller;
 
-
-use AmzsCMS\ArticleBundle\Entity\Post;
-use AmzsCMS\ArticleBundle\Entity\SocialSharing;
 use AmzsCMS\PageBundle\Constant\PageRoute;
 use AmzsCMS\PageBundle\DataTable\PageDataTable;
 use AmzsCMS\PageBundle\DataType\PostStatusType;
 use AmzsCMS\PageBundle\Entity\Page;
+use AmzsCMS\PageBundle\Entity\SocialSharing;
 use AmzsCMS\PageBundle\Form\AddPageForm;
 use AmzsCMS\PageBundle\Services\PageService;
 use Cocur\Slugify\Slugify;
@@ -37,48 +35,47 @@ class PageController extends AbstractController
         $langConfig           = $parameterBag->get('language');
         $this->locales        = $langConfig['locales'] ?? ['vi'];
     }
-    private function loadTranslations(Post $post): array
+
+    private function loadTranslations(Page $page): array
     {
         $translationRepo = $this->entityManager->getRepository(Translation::class);
-        $allTranslations = $translationRepo->findTranslations($post);
+        $allTranslations = $translationRepo->findTranslations($page);
 
         $translations = [];
         foreach ($this->locales as $locale) {
             $translations[$locale] = [
-                'title'       => $allTranslations[$locale]['title'] ?? $post->getTitle(),
-                'description' => $allTranslations[$locale]['description'] ?? $post->getDescription(),
-                'content'     => $allTranslations[$locale]['content'] ?? $post->getContent(),
+                'title'       => $allTranslations[$locale]['title'] ?? $page->getTitle(),
+                'description' => $allTranslations[$locale]['description'] ?? $page->getDescription(),
+                'content'     => $allTranslations[$locale]['content'] ?? $page->getContent(),
             ];
         }
 
         return $translations;
     }
 
-    private function saveTranslations(Post $post, $postForm): void
+    private function saveTranslations(Page $page, $form): void
     {
         $translationRepo = $this->entityManager->getRepository(Translation::class);
-
         $defaultLocale = $this->locales[0];
 
         foreach ($this->locales as $locale) {
-
-            $title = $postForm->get("title_$locale")->getData();
-            $description = $postForm->get("description_$locale")->getData();
-            $content = $postForm->get("content_$locale")->getData();
+            $title = $form->get("title_$locale")->getData();
+            $description = $form->get("description_$locale")->getData();
+            $content = $form->get("content_$locale")->getData();
 
             if ($locale === $defaultLocale) {
-
-                $post->setTitle($title ?? '');
-                $post->setDescription($description);
-                $post->setContent($content);
+                $page->setTitle($title ?? '');
+                $page->setDescription($description);
+                $page->setContent($content);
             }
-            $translationRepo->translate($post, 'title', $locale, $title);
-            $translationRepo->translate($post, 'description', $locale, $description);
-            $translationRepo->translate($post, 'content', $locale, $content);
+            $translationRepo->translate($page, 'title', $locale, $title);
+            $translationRepo->translate($page, 'description', $locale, $description);
+            $translationRepo->translate($page, 'content', $locale, $content);
         }
 
-        $this->entityManager->persist($post);
+        $this->entityManager->persist($page);
     }
+
     public function index(Request $request): Response
     {
         return $this->render('@AmzsPage/page/index.html.twig',[
@@ -94,14 +91,10 @@ class PageController extends AbstractController
     public function add(Request $request): Response
     {
         $page = new Page();
-        $post    = new Post();
-        $page->setPost($post);
-        $post->setPage($page);
-        //check permission
-//        $this->denyAccessUnlessGranted(PageVoter::ADD, $page);
+
         $socialSharing = new SocialSharing();
-        $socialSharing->setPost($post);
-        $post->setSocialSharing($socialSharing);
+        $socialSharing->setPage($page);
+        $page->setSocialSharing($socialSharing);
 
         $translations = [];
         foreach ($this->locales as $locale) {
@@ -112,29 +105,35 @@ class PageController extends AbstractController
             ];
         }
 
-        $form = $this->createForm(AddPageForm::class, $page,[
+        $form = $this->createForm(AddPageForm::class, $page, [
             'locales'      => $this->locales,
             'translations' => $translations,
         ]);
+
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->saveTranslations($page->getPost(), $form->get('post'));
+            $this->saveTranslations($page, $form);
+
             $slugify = new Slugify();
             $slug = $slugify->slugify($page->getName());
-            $page->getPost()->setSlug($slug);
+            $page->setSlug($slug);
+
             $this->entityManager->persist($page);
-            $this->entityManager->persist($page->getPost());
             $this->entityManager->flush();
+
             return new JsonResponse([
                 'message' => 'Page added successfully',
             ]);
         }
+
         return $this->render('@AmzsPage/page/add_or_edit.html.twig', [
             'form' => $form->createView(),
             'page' => $page,
             'locales' => $this->locales,
         ]);
     }
+
     public function edit(Request $request, int $id): Response
     {
         $page = $this->pageService->findOneById($id);
@@ -143,21 +142,13 @@ class PageController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        if (!$page->getPost()) {
-            $post = new Post();
-            $page->setPost($post);
-            $post->setPage($page);
-        }
-
-        $post = $page->getPost();
-
-        if ($post->getSocialSharing() === null) {
+        if ($page->getSocialSharing() === null) {
             $socialSharing = new SocialSharing();
-            $socialSharing->setPost($post);
-            $post->setSocialSharing($socialSharing);
+            $socialSharing->setPage($page);
+            $page->setSocialSharing($socialSharing);
         }
 
-        $translations = $this->loadTranslations($post);
+        $translations = $this->loadTranslations($page);
 
         $form = $this->createForm(AddPageForm::class, $page, [
             'action' => $this->generateUrl(
@@ -171,29 +162,25 @@ class PageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $isHot = $form->get('post')->get('isHot')->getData();
-            $isNew = $form->get('post')->get('isNew')->getData();
+            $isHot = $form->get('isHot')->getData();
+            $isNew = $form->get('isNew')->getData();
             $isKeepSlug = $request->request->get('keep_slug');
 
             if (is_string($isHot) && $isHot == 'on') {
-                $page->getPost()->setIsHot(PostStatusType::HOT_TYPE_HOT);
+                $page->setIsHot(PostStatusType::HOT_TYPE_HOT);
             }
 
             if (is_string($isNew) && $isNew == 'on') {
-                $page->getPost()->setIsNew(PostStatusType::NEW_TYPE_NEW);
+                $page->setIsNew(PostStatusType::NEW_TYPE_NEW);
             }
 
             if (is_null($isKeepSlug)) {
                 $slugify = new Slugify();
                 $slug = $slugify->slugify($page->getName());
-                $page->getPost()->setSlug($slug);
+                $page->setSlug($slug);
             }
 
-            $this->saveTranslations(
-                $page->getPost(),
-                $form->get('post')
-            );
+            $this->saveTranslations($page, $form);
 
             $this->entityManager->flush();
 
@@ -218,7 +205,7 @@ class PageController extends AbstractController
         $page = $this->pageService->findOneById($id);
 
         if (!$page) {
-            throw $this->createNotFoundException('Article not found');
+            throw $this->createNotFoundException('Page not found');
         }
 
         $csrfToken = $request->query->get('_csrf_token');
@@ -231,7 +218,7 @@ class PageController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse([
-            'message' => 'Article deleted successfully'
+            'message' => 'Page deleted successfully'
         ]);
     }
 }

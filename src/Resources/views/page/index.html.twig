@@ -63,7 +63,8 @@
 
                             const editUrl = "{{ path(amzs_page_edit_route, {'id': '__ID__'}) }}"
                                 .replace('__ID__', row.id);
-
+                            const blockUrl = "{{ path(amzs_admin_block_index, {'id': '__ID__'}) }}"
+                                .replace('__ID__', row.id);
                             const deleteUrl = "{{ path(amzs_page_delete_route, {
                                 'id': '__ID__',
                                 '_csrf_token': '__CSRF_TOKEN__'
@@ -80,7 +81,14 @@
                                     </span>
 
                                 </a>
+                                <a href="${blockUrl}"
+                                   class="btn btn-icon btn-active-light-primary w-30px h-30px me-2">
 
+                                    <span data-bs-toggle="tooltip" title="Edit">
+                                        {{ icon('eye') }}
+                                    </span>
+
+                                </a>
                                 <a href="${deleteUrl}"
                                    data-amz-btn-remove
                                    class="btn btn-icon btn-active-light-primary w-30px h-30px">

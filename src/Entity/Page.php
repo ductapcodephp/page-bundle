@@ -61,7 +61,6 @@ class Page
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
      */
     private $parent;
-
     /**
      * @ORM\OneToMany(targetEntity="AmzsCMS\PageBundle\Entity\Page", mappedBy="parent")
      */
@@ -117,16 +116,6 @@ class Page
      * @ORM\Column(type="text", nullable=true)
      */
     private $config;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="AmzsCMS\TopicBundle\Entity\Topic", inversedBy="pages", cascade={"persist"})
-     * @ORM\JoinTable(
-     * name="amzs_page_topic",
-     * joinColumns={@ORM\JoinColumn(name="page_id", referencedColumnName="id")},
-     * inverseJoinColumns={@ORM\JoinColumn(name="topic_id", referencedColumnName="id")}
-     * )
-     */
-    private $topics;
 
     /**
      * @Gedmo\Locale
